@@ -49,12 +49,15 @@ jobs:
       
       - name: Get Add One Hour Current Time
         id: add_hour_time
-        run: echo "::set-output name=date::$(date -d '+1 hour' '+%s')"
+        run: echo "::set-output name=date::$(date -d '+30 minutes' '+%s')"
       
       - name: Create JWT Payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}'
+        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
       
+      - name: Create JWT Signature
+        run: echo -n 'jwt_header.jwt_payload' | openssl dgst -sha256 -binary -sign ${{ secrets.NAVERWORKS_PRIVATE_KEY }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
+        
       - name: Token
         run: curl --request POST \
           --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
