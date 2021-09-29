@@ -47,9 +47,13 @@ jobs:
         id: current_time
         run: echo "::set-output name=date::$(date +%s)"
       
+      - name: Get Add One Hour Current Time
+        id: add_hour_time
+        run: echo "::set-output name=date::$(date -d '+1 hour' '+%s')"
+      
       - name: Create JWT Payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":$(date "+%s")}'
+        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}'
       
       - name: Token
         run: curl --request POST \
