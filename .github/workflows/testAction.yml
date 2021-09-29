@@ -64,7 +64,19 @@ jobs:
 #         run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
         
       - name: Token
-        run: curl --request POST \
-          --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
-          --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
-          --data '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
+        run: curl \
+          -X POST \
+          -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+          -d '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
+            
+        
+        
+        
+#         curl --request POST --data '{"event_type": "do-something"}' \
+#           https://api.github.com/repos/n8ebel/GitHubActionsAutomationSandbox/dispatches
+        
+        
+#         curl --request POST \
+#           --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
+#           --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+#           --data '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
