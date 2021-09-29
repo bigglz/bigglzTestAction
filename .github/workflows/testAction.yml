@@ -64,8 +64,8 @@ jobs:
 #         run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
         
       - name: Token
-        run: curl \
-          -X POST \
+        run: |
+          curl -X POST https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token \
           -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
           -d '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
             
