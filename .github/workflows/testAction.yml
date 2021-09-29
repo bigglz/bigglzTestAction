@@ -42,7 +42,7 @@ jobs:
           
       - name: Create JWT Header
         id: jwt_header
-        run: echo -n '::set-output name=header::$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$//)'
+        run: echo -n "::set-output name=header::$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
         
       - name: Get Current Time
         id: current_time
@@ -56,11 +56,11 @@ jobs:
         id: jwt_payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > 
-        run: echo -n '::set-output name=payload::$(echo -n '{"iss":"${{ secrets.NAVERWORKS_SERVER_ID }}","iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)'
+        run: echo -n "::set-output name=payload::$(echo -n '{"iss":"${{ secrets.NAVERWORKS_SERVER_ID }}","iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Create JWT Signature
         id: jwt_signature
-        run: echo -n '::set-output name=signature::$(echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}" | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')'
+        run: echo -n "::set-output name=signature::$(echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}" | openssl dgst -sha256 -binary -sign ${{ .github/secrets/text.key }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
 #         run: echo "::set-output name=signature::$(echo -n '"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
 #         run: echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"
 # eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ
