@@ -45,8 +45,8 @@ jobs:
         
       - name: Create JWT Payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-        run: iat=$(date +%s) \
-          echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":$iat,"exp":$(date "+%s")}'
+        run: iat='date +%s' \
+          echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{$iat}},"exp":$(date "+%s")}'
       
       - name: Token
         run: curl --request POST \
