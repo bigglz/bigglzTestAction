@@ -60,7 +60,7 @@ jobs:
       
       - name: Create JWT Signature
         id: jwt_signature
-        run: echo "::set-output name=signature::$(echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
+        run: echo "::set-output name=signature::$(echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
 #         run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
         
       - name: Token
