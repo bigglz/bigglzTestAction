@@ -42,7 +42,7 @@ jobs:
           
       - name: Create JWT Header
         id: jwt_header
-        run: echo "::set-output name=header::$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
+        run: echo -n "::set-output name=header::$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Get Current Time
         id: current_time
