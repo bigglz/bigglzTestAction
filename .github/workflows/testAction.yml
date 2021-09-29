@@ -57,7 +57,7 @@ jobs:
         id: jwt_payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > 
-        run: echo "::set-output name=payload::$(echo -n '{"iss":"${{ secrets.NAVERWORKS_SERVER_ID }}","iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
+        run: echo -n "::set-output name=payload::$(echo -n '{"iss":"${{ secrets.NAVERWORKS_SERVER_ID }}","iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Create JWT Signature
         id: jwt_signature
