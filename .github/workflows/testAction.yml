@@ -53,12 +53,14 @@ jobs:
         run: echo "::set-output name=date::$(date -d '+30 minutes' '+%s')"
       
       - name: Create JWT Payload
+        id: jwt_payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
+#         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > 
+        run: echo "::set-output name=payload::$(echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Create JWT Signature
 #         run: echo -n jwt_header '.jwt_payload' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
-        run: echo -n '${{ steps.jwt_header.outputs.header }}'
+        run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
         
       - name: Token
         run: curl --request POST \
