@@ -59,11 +59,12 @@ jobs:
         run: echo "::set-output name=payload::$(echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Create JWT Signature
-#         run: echo -n jwt_header '.jwt_payload' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
-        run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
+        id: jwt_signature
+        run: echo "::set-output name=signature::$(echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
+#         run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
         
       - name: Token
         run: curl --request POST \
           --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
-#           --header 'authorization: Bearer <TOKEN>' \
-#           --data '{"event_type": "hello"}'
+          --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+          --data '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
