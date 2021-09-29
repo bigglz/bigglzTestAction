@@ -41,7 +41,7 @@ jobs:
           echo test, and deploy your project.
           
       - name: Create JWT Header
-        run: echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_header
+        run: echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$// > $jwt_header
       
       - name: Get Current Time
         id: current_time
