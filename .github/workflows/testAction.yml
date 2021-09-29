@@ -41,7 +41,7 @@ jobs:
           echo test, and deploy your project.
           
       - name: Create JWT Header
-        run: echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$// > $jwt_header
+        run: echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_header
       
       - name: Get Current Time
         id: current_time
@@ -56,7 +56,7 @@ jobs:
         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
       
       - name: Create JWT Signature
-        run: echo -n '${{ jwt_header }}.jwt_payload' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
+        run: echo -n jwt_header '.jwt_payload' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/private_20210928141052.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
         
       - name: Token
         run: curl --request POST \
