@@ -60,8 +60,10 @@ jobs:
       
       - name: Create JWT Signature
         id: jwt_signature
-        run: echo "::set-output name=signature::$(echo -n '"${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
+#         run: echo "::set-output name=signature::$(echo -n '"${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
+        run: echo "::set-output name=signature::$(echo -n '"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
 #         run: echo -n '${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}'
+# eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ
         
       - name: Token
         run: |
