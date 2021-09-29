@@ -60,16 +60,17 @@ jobs:
       
       - name: Create JWT Signature
         id: jwt_signature
-#         run: echo "::set-output name=signature::$(echo -n '"${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
+        run: echo -n '::set-output name=signature::$(echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}" | openssl dgst -sha256 -binary -sign ${{ .github/secrets/text.key }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')'
 #         run: echo "::set-output name=signature::$(echo -n '"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
-        run: echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"
+#         run: echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}"
 # eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ
         
       - name: Token
         run: |
           curl -X POST https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token \
           -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
-          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ.X0UNF-_N4tWudW-Ja42pWefFZuaIrK-g5rO576qAk8jIAWnc-1LUekO_pNJciSFrIfp3irgNW4tT4Y6X-xNhvMllx4d_LGiS2-KVMmPBt3fx6WpWHx9TlrxiAaAVXE1BHM0XZEtjVL-6jIo57jNJim2XU9_XMmxSTvvbNts-7QW5YhuiCW6yra5yrT0p4GhYG6xd5Qa5l2iSW72vuopiOzZA7lhvN8Vq22Q19uy-D6CTe-xHdu55BKd4M1g4ZBEt5MRKjyCHyDInMhtBJj089i5bPBHiQU14JECfqE6FZpb_SqGodbmXSlDFkAm_WqjOdmdJ3trHt0qDZE2O4RhLZA'
+          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}.${{ steps.jwt_signature.outputs.signature }}'
+#          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ.X0UNF-_N4tWudW-Ja42pWefFZuaIrK-g5rO576qAk8jIAWnc-1LUekO_pNJciSFrIfp3irgNW4tT4Y6X-xNhvMllx4d_LGiS2-KVMmPBt3fx6WpWHx9TlrxiAaAVXE1BHM0XZEtjVL-6jIo57jNJim2XU9_XMmxSTvvbNts-7QW5YhuiCW6yra5yrT0p4GhYG6xd5Qa5l2iSW72vuopiOzZA7lhvN8Vq22Q19uy-D6CTe-xHdu55BKd4M1g4ZBEt5MRKjyCHyDInMhtBJj089i5bPBHiQU14JECfqE6FZpb_SqGodbmXSlDFkAm_WqjOdmdJ3trHt0qDZE2O4RhLZA'
           
           
 #          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}.${{ steps.jwt_signature.outputs.signature }}'
