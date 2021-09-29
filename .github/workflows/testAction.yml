@@ -39,3 +39,9 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+      
+      - name: Token
+        run: curl --request POST \
+          --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
+#           --header 'authorization: Bearer <TOKEN>' \
+#           --data '{"event_type": "hello"}'
