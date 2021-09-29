@@ -56,7 +56,8 @@ jobs:
         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
       
       - name: Create JWT Signature
-        run: echo -n 'jwt_header.jwt_payload' | openssl dgst -sha256 -binary ${{ secrets.NAVERWORKS_PRIVATE_KEY }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
+        run: echo -n ${{ secrets.NAVERWORKS_PRIVATE_KEY }} >> private.key \
+          echo -n 'jwt_header.jwt_payload' | openssl dgst -sha256 -binary -sign private.key | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_'
         
       - name: Token
         run: curl --request POST \
