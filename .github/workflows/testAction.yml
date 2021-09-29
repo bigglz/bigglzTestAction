@@ -42,11 +42,14 @@ jobs:
           
       - name: Create JWT Header
         run: echo -n '{"alg":"RS256","typ":"JWT"}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_header
-        
+      
+      - name: Get Current Time
+        id: current_time
+        run: echo "::set-output name=date::$(date +%s)"
+      
       - name: Create JWT Payload
 #         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-        run: echo date +%s \
-          echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":$iat,"exp":$(date "+%s")}'
+        run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":$(date "+%s")}'
       
       - name: Token
         run: curl --request POST \
