@@ -1,15 +1,9 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: NaverWorksPushMessage
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -24,23 +18,11 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    env:
-      ACCESS_TOKEN: ${{ 'test' }}
+    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
           
       - name: Create JWT Header
         id: jwt_header
@@ -56,16 +38,11 @@ jobs:
       
       - name: Create JWT Payload
         id: jwt_payload
-#         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${date "+%s"},"exp":${date "+%s"}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > jwt_payload
-#         run: echo -n '{"iss":${{ secrets.NAVERWORKS_SERVER_ID }},"iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | sed s/\+/-/ | sed -E s/=+$// > 
         run: echo -n "::set-output name=payload::$(echo -n '{"iss":"${{ secrets.NAVERWORKS_SERVER_ID }}","iat":${{ steps.current_time.outputs.date }},"exp":${{ steps.add_hour_time.outputs.date }}}' | base64 | tr -d '\n' | sed s/\+/-/ | sed -E s/=+$//)"
       
       - name: Create JWT Signature
         id: jwt_signature
         run: echo -n "::set-output name=signature::$(echo -n "${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}" | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
-#         run: echo "::set-output name=signature::$(echo -n '"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ"' | openssl dgst -sha256 -binary -sign ${{ '.github/secrets/text.key' }} | openssl enc -base64 | tr -d '\n=' | tr -- '+/' '-_')"
-#         run: echo -n "${{ steps.jwt_payload.outputs.payload }}"
-# eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ
         
       - name: Token
         id: access_token
@@ -85,21 +62,3 @@ jobs:
           -H 'consumerKey: ${{ secrets.NAVERWORKS_CONSUMER_KEY }}' \
           -d '{"accountId": "hong@bigglz.com","content": {"type": "text","text":"${{ github.event.inputs.message }}"}}'
           
-#      - name: Echo Access Token
-#        run: echo "${{ steps.access_token.outputs.token }}"
-#          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ.X0UNF-_N4tWudW-Ja42pWefFZuaIrK-g5rO576qAk8jIAWnc-1LUekO_pNJciSFrIfp3irgNW4tT4Y6X-xNhvMllx4d_LGiS2-KVMmPBt3fx6WpWHx9TlrxiAaAVXE1BHM0XZEtjVL-6jIo57jNJim2XU9_XMmxSTvvbNts-7QW5YhuiCW6yra5yrT0p4GhYG6xd5Qa5l2iSW72vuopiOzZA7lhvN8Vq22Q19uy-D6CTe-xHdu55BKd4M1g4ZBEt5MRKjyCHyDInMhtBJj089i5bPBHiQU14JECfqE6FZpb_SqGodbmXSlDFkAm_WqjOdmdJ3trHt0qDZE2O4RhLZA'
-          
-          
-#          -d 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${{ steps.jwt_header.outputs.header }}.${{ steps.jwt_payload.outputs.payload }}.${{ steps.jwt_signature.outputs.signature }}'
-            
-        
-#         eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMGIxOWI3OWIxYzM0OWI3OWFjZjBiZTBlNTJkMjk2NSIsImlhdCI6MTYzMjkyMDA4NiwiZXhwIjoxNjMyOTIxODg2fQ.X0UNF-_N4tWudW-Ja42pWefFZuaIrK-g5rO576qAk8jIAWnc-1LUekO_pNJciSFrIfp3irgNW4tT4Y6X-xNhvMllx4d_LGiS2-KVMmPBt3fx6WpWHx9TlrxiAaAVXE1BHM0XZEtjVL-6jIo57jNJim2XU9_XMmxSTvvbNts-7QW5YhuiCW6yra5yrT0p4GhYG6xd5Qa5l2iSW72vuopiOzZA7lhvN8Vq22Q19uy-D6CTe-xHdu55BKd4M1g4ZBEt5MRKjyCHyDInMhtBJj089i5bPBHiQU14JECfqE6FZpb_SqGodbmXSlDFkAm_WqjOdmdJ3trHt0qDZE2O4RhLZA
-        
-#         curl --request POST --data '{"event_type": "do-something"}' \
-#           https://api.github.com/repos/n8ebel/GitHubActionsAutomationSandbox/dispatches
-        
-        
-#         curl --request POST \
-#           --url 'https://auth.worksmobile.com/b/${{ secrets.NAVERWORKS_API_ID }}/server/token' \
-#           --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
-#           --data '{"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer","assertion":"${{ steps.jwt_signature.outputs.signature }}"}'
