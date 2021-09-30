@@ -83,7 +83,7 @@ jobs:
           -H 'Authorization: Bearer ${{ steps.access_token.outputs.token }}' \
           -H 'content-type: application/json; charset=UTF-8' \
           -H 'consumerKey: ${{ secrets.NAVERWORKS_CONSUMER_KEY }}' \
-          -d '{"accountId": "hong@bigglz.com","content": {"type": "text","text": "${{ github.event.inputs.message }}"}}'
+          -d '{"accountId": "hong@bigglz.com","content": {"type": "text","text":"${{ github.event.inputs.message }}"}}'
           
 #      - name: Echo Access Token
 #        run: echo "${{ steps.access_token.outputs.token }}"
