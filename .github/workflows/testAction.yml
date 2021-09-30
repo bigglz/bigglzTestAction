@@ -10,7 +10,7 @@ on:
       accountId:
         description: 'accountId'
         required: false
-        default: ${{ secrets.NAVERWORKS_DEFAULT_ACCOUNT_ID }}
+        default: 'hong@bigglz.com'
       message:
         description: 'Message'
         required: false
