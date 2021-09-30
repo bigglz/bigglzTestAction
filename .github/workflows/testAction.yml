@@ -79,7 +79,7 @@ jobs:
           
       - name: Push Message
         run: |
-          curl -X POST https://auth.worksmobile.com/r/${{ secrets.NAVERWORKS_API_ID }}/message/v1/bot/${{ secrets.NAVERWORKS_BOT_NO }}/message/push \
+          curl -X POST https://apis.worksmobile.com/r/${{ secrets.NAVERWORKS_API_ID }}/message/v1/bot/${{ secrets.NAVERWORKS_BOT_NO }}/message/push \
           -H 'Authorization: Bearer ${{ steps.access_token.outputs.token }}' \
           -H 'content-type: application/json; charset=UTF-8' \
           -H 'consumerKey: ${{ secrets.NAVERWORKS_CONSUMER_KEY }}' \
