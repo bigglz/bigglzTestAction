@@ -10,7 +10,7 @@ on:
       accountId:
         description: 'accountId'
         required: false
-        default: ''
+        default: '${{ secrets.NAVERWORKS_DEFAULT_ACCOUNT_ID }}'
       message:
         description: 'Message'
         required: false
@@ -64,5 +64,5 @@ jobs:
           -H 'Authorization: Bearer ${{ steps.access_token.outputs.token }}' \
           -H 'content-type: application/json; charset=UTF-8' \
           -H 'consumerKey: ${{ secrets.NAVERWORKS_CONSUMER_KEY }}' \
-          -d '{"accountId": "hong@bigglz.com","content": {"type": "text","text":"${{ github.event.inputs.message }}"}}'
+          -d '{"accountId": "${{ github.event.inputs.accountId }}","content": {"type": "text","text":"${{ github.event.inputs.message }}"}}'
           
