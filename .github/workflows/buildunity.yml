@@ -12,6 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        unityVersion:
+          - 2020.3.17f1
         targetPlatform:
           - iOS # Build an iOS player.
           - Android # Build an Android .apk standalone app.
@@ -29,6 +31,7 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
+          unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v2
         with:
